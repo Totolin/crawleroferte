@@ -6,11 +6,13 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import com.aceucv.vpe.crawler.entities.Category;
 import com.aceucv.vpe.crawler.entities.Offer;
 
 public class MainWindow extends JFrame {
@@ -18,8 +20,28 @@ public class MainWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JTabbedPane tabs;
+	public JButton buttonOpenOffer;
+	public JButton buttonDeleteOffer;
+	public JButton buttonCrawlCategories;
+	public JButton buttonSelectAllCategories;
+	public JButton buttonCrawlItems;
+
+	private JPanel buttonPanelItems;
+	private JPanel buttonPanelCategories;
+
+	private JTable itemsTable;
+	private JTable categoriesTable;
+
+	public JLabel itemsLabel;
+	public JLabel settingsLabel;
+
+	private JScrollPane paneItems;
+	private JScrollPane paneCategories;
+
+	public JProgressBar progressCategories;
 
 	private JFrame frame = new JFrame();
+
 	private String[] columnNamesItems = { "Name", "Category", "Price (RON)", "Discount (%)", "Link" };
 	private String[] columnNamesCategories = { "Name", "Select" };
 
@@ -31,73 +53,119 @@ public class MainWindow extends JFrame {
 			{ "nora", "B09_154-358", "9.124.01.154", "false", "asd" },
 			{ "xantipa", "B01_001-358", "1.124.01.001", "false", "asd" }, };
 
-	private DefaultTableModel model = new DefaultTableModel(data, columnNamesItems) {
+	private Object[][] dataCategories = {};
 
+	private DefaultTableModel modelItems = new DefaultTableModel(data, columnNamesItems) {
+		private static final long serialVersionUID = 1L;
+	};
+
+	private DefaultTableModel modelSettings = new DefaultTableModel(dataCategories, columnNamesCategories) {
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public boolean isCellEditable(int row, int column) {
-			switch (column) {
-			case 3:
-				return true;
-			default:
-				return false;
-			}
-		}
-
-		@Override
 		public Class getColumnClass(int column) {
-			return getValueAt(0, column).getClass();
+			switch (column) {
+			case 0:
+				return String.class;
+			default:
+				return Boolean.class;
+			}
 		}
 	};
 
-	private void addItemToList(Offer newOffer) {
+	public void addItemToList(Offer newOffer) {
 		String[] data = { newOffer.getName(), newOffer.getCategory(), newOffer.getPrice(), newOffer.getDiscount(),
 				newOffer.getURL() };
 
-		model.addRow(data);
+		modelItems.addRow(data);
+	}
+
+	public void addCategoryToList(Category newCategory) {
+		Object[] data = { newCategory.getDescription(), false };
+		System.out.println("Adding new category");
+		modelSettings.addRow(data);
+	}
+
+	private JPanel getItemsTab() {
+		// Create the container (main)
+		JPanel container = new JPanel();
+
+		// Create the table
+		itemsTable = new JTable(modelItems);
+
+		// Create all the buttons and labels needed
+		buttonOpenOffer = new JButton("Open Offer");
+		buttonDeleteOffer = new JButton("Delete Offer");
+		itemsLabel = new JLabel("    You can view your offers here    ");
+
+		// Add the buttons to a button panel
+		buttonPanelItems = new JPanel();
+		buttonPanelItems.add(buttonOpenOffer);
+		buttonPanelItems.add(itemsLabel);
+		buttonPanelItems.add(buttonDeleteOffer);
+
+		// Create a scrollable pane for the list
+		paneItems = new JScrollPane(itemsTable);
+
+		// Add items via layout
+		container.setLayout(new BorderLayout());
+		container.add(buttonPanelItems, BorderLayout.NORTH);
+		container.add(paneItems, BorderLayout.CENTER);
+
+		return container;
+	}
+
+	private JPanel getSettingsTab() {
+		// Create the container (main)
+		JPanel container = new JPanel();
+
+		// Create the table
+		categoriesTable = new JTable(modelSettings);
+
+		// Create all the buttons needed
+		buttonCrawlCategories = new JButton("Search caterogires");
+
+		buttonSelectAllCategories = new JButton("Select all");
+
+		buttonCrawlItems = new JButton("Crawl");
+
+		settingsLabel = new JLabel("    You can manage your settings here    ");
+
+		// Create a progress bar for crawling progress
+		progressCategories = new JProgressBar();
+
+		// Add the buttons to a button panel
+		buttonPanelCategories = new JPanel();
+		buttonPanelCategories.add(buttonCrawlCategories);
+		buttonPanelCategories.add(buttonCrawlItems);
+		buttonPanelCategories.add(settingsLabel);
+		buttonPanelCategories.add(progressCategories);
+		buttonPanelCategories.add(buttonSelectAllCategories);
+
+		// Create a scrollable pane for the list
+		paneCategories = new JScrollPane(categoriesTable);
+
+		// Add items via layout
+		container.setLayout(new BorderLayout());
+		container.add(buttonPanelCategories, BorderLayout.NORTH);
+		container.add(paneCategories, BorderLayout.CENTER);
+
+		return container;
 	}
 
 	public MainWindow() {
 		// Current tabbed view
 		tabs = new JTabbedPane();
 
-		JTable table = new JTable(model);
-		JTable table2 = new JTable(model);
+		// Create all the tabs
+		tabs.addTab("Items", getItemsTab());
+		tabs.addTab("Settings", getSettingsTab());
 
-		JPanel buttonPanel = new JPanel();
-		JPanel buttonPanel2 = new JPanel();
-
-		buttonPanel.add(new JButton("A button"));
-		buttonPanel.add(new JLabel("Some description for the awesome table below "));
-		buttonPanel.add(new JButton("another button"));
-
-		buttonPanel2.add(new JButton("A button"));
-		buttonPanel2.add(new JLabel("Some description for the awesome table below "));
-		buttonPanel2.add(new JButton("another button"));
-
-		JScrollPane tablePanel = new JScrollPane(table);
-		JScrollPane tablePanel2 = new JScrollPane(table2);
-
-		JPanel container = new JPanel();
-		JPanel container2 = new JPanel();
-
-		container.setLayout(new BorderLayout());
-		container.add(buttonPanel, BorderLayout.NORTH);
-		container.add(tablePanel, BorderLayout.CENTER);
-
-		container2.setLayout(new BorderLayout());
-		container2.add(buttonPanel2, BorderLayout.NORTH);
-		container2.add(tablePanel2, BorderLayout.CENTER);
-
-		tabs.addTab("Items", container);
-		tabs.addTab("Settings", container2);
-
+		// Set window configurations and visibility
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(tabs);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-
 	}
 }
