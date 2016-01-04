@@ -16,6 +16,7 @@ import org.jsoup.select.Elements;
 import com.aceucv.vpe.crawler.entities.Category;
 import com.aceucv.vpe.crawler.entities.Item;
 import com.aceucv.vpe.crawler.gui.MainWindow;
+import com.aceucv.vpe.crawler.model.Resources;
 
 /**
  * Created by ctotolin on 22-Nov-15.
@@ -37,6 +38,7 @@ public class Crawler {
 
 		Map<Integer, Category> categories = new HashMap<Integer, Category>();
 		Elements selection = doc.select("a[href]");
+		window.settingsLabel.setText(Resources.label_text_crawling);
 		int progressTick = selection.size() / 100;
 		window.progressCategories.setValue(0);
 		for (Element elem : selection) {
@@ -74,6 +76,7 @@ public class Crawler {
 		}
 
 		System.out.println("Finished crawling categories");
+		window.settingsLabel.setText(Resources.label_text_finished_cat);
 		return categories;
 	}
 

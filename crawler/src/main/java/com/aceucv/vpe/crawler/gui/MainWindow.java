@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.aceucv.vpe.crawler.entities.Category;
 import com.aceucv.vpe.crawler.entities.Offer;
+import com.aceucv.vpe.crawler.model.Resources;
 
 public class MainWindow extends JFrame {
 
@@ -96,7 +97,7 @@ public class MainWindow extends JFrame {
 		// Create all the buttons and labels needed
 		buttonOpenOffer = new JButton("Open Offer");
 		buttonDeleteOffer = new JButton("Delete Offer");
-		itemsLabel = new JLabel("    You can view your offers here    ");
+		itemsLabel = new JLabel(Resources.label_text_offers);
 
 		// Add the buttons to a button panel
 		buttonPanelItems = new JPanel();
@@ -129,7 +130,7 @@ public class MainWindow extends JFrame {
 
 		buttonCrawlItems = new JButton("Crawl");
 
-		settingsLabel = new JLabel("    You can manage your settings here    ");
+		settingsLabel = new JLabel(Resources.label_text_settings);
 
 		// Create a progress bar for crawling progress
 		progressCategories = new JProgressBar();
