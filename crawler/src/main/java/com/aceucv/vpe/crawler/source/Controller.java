@@ -2,8 +2,10 @@ package com.aceucv.vpe.crawler.source;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
 
 import com.aceucv.vpe.crawler.engine.Crawler;
+import com.aceucv.vpe.crawler.entities.Category;
 import com.aceucv.vpe.crawler.gui.MainWindow;
 
 /**
@@ -29,12 +31,15 @@ public class Controller {
 				Thread thread = new Thread() {
 					public void run() {
 						System.out.println("Starting categories crawl");
-						crawler.crawlCategories("http://www.emag.ro/homepage", "http://emag.ro", window);
+
+						Map<Integer, Category> categories = crawler.crawlCategories("http://www.emag.ro/homepage",
+								"http://emag.ro", window);
+
 					}
 				};
 				thread.start();
 			}
 		});
-
 	}
+
 }

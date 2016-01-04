@@ -86,6 +86,10 @@ public class Crawler {
 
 		// TODO : Reset to normal state
 		for (int i = 0; i < 1; i++) {
+			// Check subcategory integrity
+			if (subcategories.get(i) == null || subcategories.get(i).equals("") || subcategories.get(i).equals(" ")) {
+				continue;
+			}
 			// Inside a subcategory we will find items. We need to find them
 			// Must also travel through pages
 			int currentPage = 1;
