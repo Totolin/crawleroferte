@@ -39,17 +39,28 @@ public class DatabaseManager {
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
 			String sql;
-			sql = "INSERT INTO categories " + "VALUES (1,'asd','asdsad','cascas','agsd')";
 
-			// create a Statement from the connection
-			Statement statement = conn.createStatement();
+			// Empty Table
+			String delete_sql = "DELETE FROM categories";
+			stmt.executeUpdate(delete_sql);
 
-			// insert the data
-			statement.executeQuery(sql);
+			// Utility values
+			for (Map.Entry<Integer, Category> category : categories.entrySet()) {
+				sql = "INSERT INTO categories VALUES(";
+				sql += category.getKey();
+				sql += ',';
+				sql += '\'' + category.getValue().getDescription() + '\'' + ',';
+				sql += '\'' + category.getValue().getPrivURL() + '\'' + ',';
+				sql += '\'' + category.getValue().getRootURL() + '\'' + ',';
+				sql += '\'' + category.getValue().getSubcatString() + '\'' + ')';
+				stmt.executeUpdate(sql);
+			}
 
 			// STEP 6: Clean-up environment
 			stmt.close();
 			conn.close();
+
+			System.out.println("Succesfully finished querries");
 
 		} catch (SQLException se) {
 			// Handle errors for JDBC

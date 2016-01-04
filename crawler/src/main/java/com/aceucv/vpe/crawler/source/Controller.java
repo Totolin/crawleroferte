@@ -7,6 +7,7 @@ import java.util.Map;
 import com.aceucv.vpe.crawler.engine.Crawler;
 import com.aceucv.vpe.crawler.entities.Category;
 import com.aceucv.vpe.crawler.gui.MainWindow;
+import com.aceucv.vpe.crawler.model.Resources;
 
 /**
  * Controller used to connect the GUI with the backend, so that any action which
@@ -32,9 +33,12 @@ public class Controller {
 					public void run() {
 						System.out.println("Starting categories crawl");
 
+						// Start searching for all categories
 						Map<Integer, Category> categories = crawler.crawlCategories("http://www.emag.ro/homepage",
 								"http://emag.ro", window);
 
+						// Save them for later use (for e.g. storing in dtb)
+						Resources.categories = categories;
 					}
 				};
 				thread.start();

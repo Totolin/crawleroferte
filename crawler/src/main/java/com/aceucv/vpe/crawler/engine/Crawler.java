@@ -39,6 +39,7 @@ public class Crawler {
 		Map<Integer, Category> categories = new HashMap<Integer, Category>();
 		Elements selection = doc.select("a[href]");
 		window.settingsLabel.setText(Resources.label_text_crawling);
+		window.categoriesTable.setFocusable(false);
 		int progressTick = selection.size() / 100;
 		window.progressCategories.setValue(0);
 		for (Element elem : selection) {
@@ -77,6 +78,7 @@ public class Crawler {
 
 		System.out.println("Finished crawling categories");
 		window.settingsLabel.setText(Resources.label_text_finished_cat);
+		window.categoriesTable.setFocusable(true);
 		return categories;
 	}
 

@@ -30,8 +30,8 @@ public class MainWindow extends JFrame {
 	private JPanel buttonPanelItems;
 	private JPanel buttonPanelCategories;
 
-	private JTable itemsTable;
-	private JTable categoriesTable;
+	public JTable itemsTable;
+	public JTable categoriesTable;
 
 	public JLabel itemsLabel;
 	public JLabel settingsLabel;
@@ -105,12 +105,17 @@ public class MainWindow extends JFrame {
 		buttonPanelItems.add(itemsLabel);
 		buttonPanelItems.add(buttonDeleteOffer);
 
+		JPanel testpanel = new JPanel();
+		testpanel.add(new JButton("asd"));
+		testpanel.add(new JLabel("sadasfg"));
+
 		// Create a scrollable pane for the list
 		paneItems = new JScrollPane(itemsTable);
 
 		// Add items via layout
 		container.setLayout(new BorderLayout());
 		container.add(buttonPanelItems, BorderLayout.NORTH);
+		// container.add(testpanel, BorderLayout.WEST);
 		container.add(paneItems, BorderLayout.CENTER);
 
 		return container;
@@ -164,7 +169,7 @@ public class MainWindow extends JFrame {
 
 		// Set window configurations and visibility
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(tabs);
+		frame.getContentPane().add(tabs);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
