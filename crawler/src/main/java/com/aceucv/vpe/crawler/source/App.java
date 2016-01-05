@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.aceucv.vpe.crawler.database.DatabaseManager;
+import com.aceucv.vpe.crawler.engine.Crawler;
 import com.aceucv.vpe.crawler.entities.Category;
+import com.aceucv.vpe.crawler.gui.MainWindow;
 
 /**
  * Hello world!
@@ -24,13 +26,13 @@ public class App {
 		// Crawler.setPrices(item);
 		// }
 
-		// MainWindow window = new MainWindow();
-		// Crawler crawler = new Crawler();
-		// Controller controller = new Controller(window, crawler);
+		MainWindow window = new MainWindow();
+		Crawler crawler = new Crawler();
+		Controller controller = new Controller(window, crawler);
 
-		Map<Integer, Category> testmap = new HashMap<Integer, Category>();
-		testmap.put(1, new Category(1, "asd", "casvsa", "ierige"));
-		DatabaseManager mgr = new DatabaseManager();
-		mgr.insetCategories(testmap);
+//		Map<Integer, Category> testmap = new HashMap<Integer, Category>();
+//		testmap.put(1, new Category(1, "asd", "casvsa", "ierige"));
+//		DatabaseManager mgr = new DatabaseManager();
+//		mgr.insetCategories(testmap);
 	}
 }
