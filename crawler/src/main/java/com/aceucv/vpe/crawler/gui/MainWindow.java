@@ -30,33 +30,32 @@ public class MainWindow extends JFrame {
 
 	// Pane for the tabs
 	private JTabbedPane tabs;
-	
+
 	// Objects in 1st tab (Offers tab)
 	public JButton buttonOpenOffer;
 	public JButton buttonDeleteOffer;
 	public JButton buttonSelectAllOffers;
 	public JButton buttonDeselectAllOffers;
-	
-	public JPanel  sidePanelOffers;
+
+	public JPanel sidePanelOffers;
 	public JLabel itemsLabel;
 	public JLabel selectionOffersLabel;
 	public JLabel logo;
-	
+
 	// Objects in 2nd tab (Settings tab)
 	public JButton buttonCrawlItems;
 	public JButton buttonCrawlCategories;
 	public JButton buttonSelectAllCategories;
 	public JButton buttonDeselectAllCategories;
-	
-	public JPanel  sidePanelCategories;
-	
+
+	public JPanel sidePanelCategories;
+
 	private JPanel buttonPanelItems;
 	private JPanel buttonPanelCategories;
 
 	public JTable itemsTable;
 	public JTable categoriesTable;
 
-	
 	public JLabel settingsLabel;
 
 	private JScrollPane paneItems;
@@ -81,7 +80,7 @@ public class MainWindow extends JFrame {
 
 	private DefaultTableModel modelItems = new DefaultTableModel(data, columnNamesItems) {
 		private static final long serialVersionUID = 1L;
-		
+
 		@Override
 		public Class<?> getColumnClass(int column) {
 			switch (column) {
@@ -128,14 +127,14 @@ public class MainWindow extends JFrame {
 		itemsTable = new JTable(modelItems);
 
 		// Create all the buttons and labels needed
-		buttonOpenOffer = 			new JButton("    Open Offer    ");
-		buttonDeleteOffer = 		new JButton("   Delete Offer   ");
-		buttonSelectAllOffers = 	new JButton("    Select all    ");
-		buttonDeselectAllOffers = 	new JButton("  Deselect all  ");
+		buttonOpenOffer = new JButton("    Open Offer    ");
+		buttonDeleteOffer = new JButton("   Delete Offer   ");
+		buttonSelectAllOffers = new JButton("    Select all    ");
+		buttonDeselectAllOffers = new JButton("  Deselect all  ");
 		itemsLabel = new JLabel(Resources.label_text_offers);
 		selectionOffersLabel = new JLabel(Resources.label_text_selection_offers);
 		logo = getLogo();
-		
+
 		// Set alignments
 		itemsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		selectionOffersLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -148,17 +147,17 @@ public class MainWindow extends JFrame {
 		// Add the buttons to a button panel
 		buttonPanelItems = new JPanel();
 		buttonPanelItems.setLayout(new BoxLayout(buttonPanelItems, BoxLayout.Y_AXIS));
-		
-		addPadding(buttonPanelItems, 1);
-		buttonPanelItems.add(logo);
-		
+
 		addPadding(buttonPanelItems, 2);
+		buttonPanelItems.add(logo);
+
+		addPadding(buttonPanelItems, 3);
 		buttonPanelItems.add(itemsLabel);
-		
+
 		addPadding(buttonPanelItems, 1);
 		buttonPanelItems.add(buttonOpenOffer);
 		buttonPanelItems.add(buttonDeleteOffer);
-		
+
 		addPadding(buttonPanelItems, 3);
 		buttonPanelItems.add(selectionOffersLabel);
 		addPadding(buttonPanelItems, 1);
@@ -215,14 +214,14 @@ public class MainWindow extends JFrame {
 		return container;
 	}
 
-	public void addPadding (JPanel panel, int count) {
-		while (count>0) {
+	public void addPadding(JPanel panel, int count) {
+		while (count > 0) {
 			count--;
 			panel.add(new JLabel(" "));
 		}
 	}
-	
-	private JLabel getLogo () {
+
+	private JLabel getLogo() {
 		// Read the image through a buffer
 		BufferedImage logoPicture = null;
 		try {
@@ -230,16 +229,15 @@ public class MainWindow extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		// Resize the image to desired size
-		Image dimg = logoPicture.getScaledInstance(150, 100,
-	            Image.SCALE_SMOOTH);
-		
+		Image dimg = logoPicture.getScaledInstance(150, 100, Image.SCALE_SMOOTH);
+
 		// Return the label with containing picture
 		JLabel picLabel = new JLabel(new ImageIcon(dimg));
 		return picLabel;
 	}
-	
+
 	public MainWindow() {
 		// Current tabbed view
 		tabs = new JTabbedPane();
