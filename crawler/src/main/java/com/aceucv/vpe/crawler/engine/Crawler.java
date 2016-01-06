@@ -82,15 +82,14 @@ public class Crawler {
 		return categories;
 	}
 
-	public static List<Item> crawlItems(Category category) throws IOException {
+	public List<Item> crawlItems(Category category){
 		List<String> subcategories = category.getSubs();
 		String baseURL = category.getRootURL();
 		Document doc = null;
 		int id = category.getId();
 		List<Item> allItems = new ArrayList<Item>();
 
-		// TODO : Reset to normal state
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < subcategories.size(); i++) {
 			// Check subcategory integrity
 			if (subcategories.get(i) == null || subcategories.get(i).equals("") || subcategories.get(i).equals(" ")) {
 				continue;
@@ -102,7 +101,11 @@ public class Crawler {
 
 			// Get first page
 			System.out.println(baseURL + subcategories.get(i) + "p" + currentPage + "/c");
-			doc = Jsoup.connect(baseURL + subcategories.get(i) + "p" + currentPage + "/c").get();
+			try {
+				doc = Jsoup.connect(baseURL + subcategories.get(i) + "p" + currentPage + "/c").get();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
 			// Grab rest of pages until none are left
 			// TODO : current page condition back to 10
@@ -113,7 +116,11 @@ public class Crawler {
 				// Check next page
 				currentPage++;
 				previousURL = doc.baseUri();
-				doc = Jsoup.connect(baseURL + subcategories.get(i) + "p" + currentPage + "/c").get();
+				try {
+					doc = Jsoup.connect(baseURL + subcategories.get(i) + "p" + currentPage + "/c").get();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 

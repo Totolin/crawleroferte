@@ -1,5 +1,7 @@
 package com.aceucv.vpe.crawler.model;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.aceucv.vpe.crawler.entities.Category;
@@ -13,4 +15,11 @@ public class Resources {
 	public static String label_text_selection_offers 	= "    Select/Deselect multiple offers   ";
 	
 	public static Map<Integer, Category> categories;
+
+	public static void updateFilteredCategories(List<Category> filtered) {
+		categories = new HashMap<Integer,Category>();
+		for (Category category : filtered) {
+			categories.put(category.getId(), category);
+		}
+	}
 }

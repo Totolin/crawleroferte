@@ -6,6 +6,8 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
@@ -47,12 +49,12 @@ public class MainWindow extends JFrame {
 	public JButton buttonCrawlCategories;
 	public JButton buttonSelectAllCategories;
 	public JButton buttonDeselectAllCategories;
-
+	public JButton buttonSaveChanges;
 	public JPanel sidePanelCategories;
 
 	private JPanel buttonPanelItems;
 	private JPanel buttonPanelCategories;
-
+	public boolean allSelected = false;
 	public JTable itemsTable;
 	public JTable categoriesTable;
 
@@ -66,7 +68,7 @@ public class MainWindow extends JFrame {
 	private JFrame frame = new JFrame();
 
 	private String[] columnNamesItems = { "Name", "Category", "Price (RON)", "Discount (%)", "Link" };
-	private String[] columnNamesCategories = { "Name", "Select" };
+	private String[] columnNamesCategories = {"ID", "Name", "Select" };
 
 	private Object[][] data = { { "igor", "B01_125-358", "1.124.01.125", "true", true },
 			{ "lenka", "B21_002-242", "21.124.01.002", "true", false },
@@ -98,10 +100,10 @@ public class MainWindow extends JFrame {
 		@Override
 		public Class<?> getColumnClass(int column) {
 			switch (column) {
-			case 0:
-				return String.class;
-			default:
+			case 2:
 				return Boolean.class;
+			default:
+				return String.class;
 			}
 		}
 	};
@@ -114,9 +116,59 @@ public class MainWindow extends JFrame {
 	}
 
 	public void addCategoryToList(Category newCategory) {
-		Object[] data = { newCategory.getDescription(), false };
+		Object[] data = { newCategory.getId(), newCategory.getDescription(), false };
 		System.out.println("Adding new category");
 		modelSettings.addRow(data);
+	}
+	
+	public void populateCategoryList(List<Category> categories) {
+		clearCategoryList();
+		for (Category category : categories) {
+			Object[] data = { category.getId(), category.getDescription(), true };
+			modelSettings.addRow(data);
+		}
+	}
+	
+	public void clearCategoryList() {
+		modelSettings.setRowCount(0);
+	}
+	
+	public void clearItemsList() {
+		modelItems.setRowCount(0);
+	}
+	
+	public void toggleSelectionCategories(boolean value) {
+		int nRow = modelSettings.getRowCount();
+		
+		for (int i = 0 ; i < nRow ; i++) {
+	    	modelSettings.setValueAt(value, i, 2);
+	    }
+	}
+	
+	public void toggleSelectionItems(boolean value) {
+		int nRow = modelItems.getRowCount();
+		
+		for (int i = 0 ; i < nRow ; i++) {
+	    	modelItems.setValueAt(value, i, 2);
+	    }
+	}
+	
+	public List<Integer> getSelectedCategories() {
+	    int nRow = modelSettings.getRowCount();
+		List<Integer> indexSelected = new ArrayList<Integer>();
+	   	boolean selected;
+	   	Integer value;
+	   	
+	    // For each row, check if selected
+	    for (int i = 0 ; i < nRow ; i++) {
+	    	selected = (Boolean) modelSettings.getValueAt(i, 2);
+	    	if (selected) {
+	    		value = (Integer) modelSettings.getValueAt(i, 0);
+	    		indexSelected.add(value);
+	    	}
+	    }
+	    
+	    return indexSelected;
 	}
 
 	private JPanel getItemsTab() {
@@ -184,12 +236,10 @@ public class MainWindow extends JFrame {
 		categoriesTable = new JTable(modelSettings);
 
 		// Create all the buttons needed
-		buttonCrawlCategories = new JButton("Search caterogires");
-
-		buttonSelectAllCategories = new JButton("Select all");
-
+		buttonCrawlCategories = new JButton("Search");
+		buttonSelectAllCategories = new JButton("Select/Deselect");
 		buttonCrawlItems = new JButton("Crawl");
-
+		buttonSaveChanges = new JButton("Save");
 		settingsLabel = new JLabel(Resources.label_text_settings);
 
 		// Create a progress bar for crawling progress
@@ -202,6 +252,7 @@ public class MainWindow extends JFrame {
 		buttonPanelCategories.add(settingsLabel);
 		buttonPanelCategories.add(progressCategories);
 		buttonPanelCategories.add(buttonSelectAllCategories);
+		buttonPanelCategories.add(buttonSaveChanges);
 
 		// Create a scrollable pane for the list
 		paneCategories = new JScrollPane(categoriesTable);
@@ -214,6 +265,7 @@ public class MainWindow extends JFrame {
 		return container;
 	}
 
+	// Adds a blank padding in the current location of the JPanel
 	public void addPadding(JPanel panel, int count) {
 		while (count > 0) {
 			count--;

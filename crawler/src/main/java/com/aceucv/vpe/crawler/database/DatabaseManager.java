@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Map;
 
 import com.aceucv.vpe.crawler.entities.Category;
@@ -23,7 +24,7 @@ public class DatabaseManager {
 	static final String USER = "root";
 	static final String PASS = "";
 
-	public void insetCategories(Map<Integer, Category> categories) {
+	public void insetCategories(List<Category> categories) {
 
 		Connection conn = null;
 		Statement stmt = null;
@@ -45,14 +46,14 @@ public class DatabaseManager {
 			stmt.executeUpdate(delete_sql);
 
 			// Utility values
-			for (Map.Entry<Integer, Category> category : categories.entrySet()) {
+			for (Category category : categories) {
 				sql = "INSERT INTO categories VALUES(";
-				sql += category.getKey();
+				sql += category.getId();
 				sql += ',';
-				sql += '\'' + category.getValue().getDescription() + '\'' + ',';
-				sql += '\'' + category.getValue().getPrivURL() + '\'' + ',';
-				sql += '\'' + category.getValue().getRootURL() + '\'' + ',';
-				sql += '\'' + category.getValue().getSubcatString() + '\'' + ')';
+				sql += '\'' + category.getDescription() + '\'' + ',';
+				sql += '\'' + category.getPrivURL() + '\'' + ',';
+				sql += '\'' + category.getRootURL() + '\'' + ',';
+				sql += '\'' + category.getSubcatString() + '\'' + ')';
 				stmt.executeUpdate(sql);
 			}
 
