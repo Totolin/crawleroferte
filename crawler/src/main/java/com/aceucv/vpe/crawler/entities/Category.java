@@ -3,6 +3,7 @@ package com.aceucv.vpe.crawler.entities;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -26,6 +27,14 @@ public class Category {
 		this.privURL = URL;
 		this.rootURL = rootURL;
 		this.subcategories = new ArrayList<String>();
+	}
+	
+	public Category(int id, String description, String URL, String rootURL, String subcats) {
+		this.id = id;
+		this.description = description;
+		this.privURL = URL;
+		this.rootURL = rootURL;
+		getSubcatsFromString(subcats);
 	}
 
 	public String getRootURL() {
@@ -105,5 +114,13 @@ public class Category {
 		}
 
 		return subcats;
+	}
+	
+	public void getSubcatsFromString(String subcats) {
+		String parts[] = subcats.split(" ");
+		
+		List<String> list = Arrays.asList(parts);
+		
+		this.subcategories = new ArrayList<String>(list); 
 	}
 }

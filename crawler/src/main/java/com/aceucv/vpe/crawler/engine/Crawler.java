@@ -27,8 +27,10 @@ public class Crawler {
 	}
 
 	public Map<Integer, Category> crawlCategories(String baseURL, String pseudoURL, MainWindow window) {
+		
 		Document doc = null;
 		Random gen = new Random();
+		window.settingsLabel.setText(Resources.label_text_crawl_start);
 		try {
 			doc = Jsoup.connect(baseURL).get();
 		} catch (IOException e) {
@@ -63,14 +65,13 @@ public class Crawler {
 
 				// Increment the progress bar
 				window.progressCategories.setValue(window.progressCategories.getValue() + progressTick);
-
+				
 				// Add the new category to our view
 				window.addCategoryToList(newCategory);
 
 				try {
 					Thread.sleep(gen.nextInt(100) + 1);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -82,7 +83,7 @@ public class Crawler {
 		return categories;
 	}
 
-	public List<Item> crawlItems(Category category){
+	public List<Item> crawlItems(Category category) throws IOException{
 		List<String> subcategories = category.getSubs();
 		String baseURL = category.getRootURL();
 		Document doc = null;
@@ -101,11 +102,7 @@ public class Crawler {
 
 			// Get first page
 			System.out.println(baseURL + subcategories.get(i) + "p" + currentPage + "/c");
-			try {
-				doc = Jsoup.connect(baseURL + subcategories.get(i) + "p" + currentPage + "/c").get();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			doc = Jsoup.connect(baseURL + subcategories.get(i) + "p" + currentPage + "/c").get();
 
 			// Grab rest of pages until none are left
 			// TODO : current page condition back to 10
@@ -116,11 +113,7 @@ public class Crawler {
 				// Check next page
 				currentPage++;
 				previousURL = doc.baseUri();
-				try {
-					doc = Jsoup.connect(baseURL + subcategories.get(i) + "p" + currentPage + "/c").get();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				doc = Jsoup.connect(baseURL + subcategories.get(i) + "p" + currentPage + "/c").get();
 			}
 		}
 
@@ -140,7 +133,7 @@ public class Crawler {
 		return items;
 	}
 
-	public static void setPrices(Item item) {
+	public void setPrices(Item item) {
 		try {
 			Document doc = Jsoup.connect("http://emag.ro" + item.getURL()).get();
 

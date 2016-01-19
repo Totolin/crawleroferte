@@ -52,25 +52,21 @@ public class MainWindow extends JFrame {
 	public JButton buttonSaveChanges;
 	public JPanel sidePanelCategories;
 
-	private JPanel buttonPanelItems;
-	private JPanel buttonPanelCategories;
-	public boolean allSelected = false;
-	public JTable itemsTable;
-	public JTable categoriesTable;
-
-	public JLabel settingsLabel;
-
-	private JScrollPane paneItems;
-	private JScrollPane paneCategories;
-
-	public JProgressBar progressCategories;
-
+	private JPanel  buttonPanelItems;
+	private JPanel  buttonPanelCategories;
+	public  boolean allSelected = false;
+	public  JTable  itemsTable;
+	public  JTable  categoriesTable;
+	public  JLabel  settingsLabel;
+	private JScrollPane  paneItems;
+	private JScrollPane  paneCategories;
+	public  JProgressBar progressCategories;
 	private JFrame frame = new JFrame();
 
 	private String[] columnNamesItems = { "Name", "Category", "Price (RON)", "Discount (%)", "Link" };
 	private String[] columnNamesCategories = {"ID", "Name", "Select" };
 
-	private Object[][] data = { { "igor", "B01_125-358", "1.124.01.125", "true", true },
+	private Object[][] dataOffers = { { "igor", "B01_125-358", "1.124.01.125", "true", true },
 			{ "lenka", "B21_002-242", "21.124.01.002", "true", false },
 			{ "peter", "B99_001-358", "99.124.01.001", "false", true },
 			{ "zuza", "B12_100-242", "12.124.01.100", "true", false },
@@ -80,7 +76,7 @@ public class MainWindow extends JFrame {
 
 	private Object[][] dataCategories = {};
 
-	private DefaultTableModel modelItems = new DefaultTableModel(data, columnNamesItems) {
+	private DefaultTableModel modelItems = new DefaultTableModel(dataOffers, columnNamesItems) {
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -133,6 +129,10 @@ public class MainWindow extends JFrame {
 		modelSettings.setRowCount(0);
 	}
 	
+	public void clearLoadingBar() {
+		progressCategories.setValue(0);
+	}
+	
 	public void clearItemsList() {
 		modelItems.setRowCount(0);
 	}
@@ -145,11 +145,11 @@ public class MainWindow extends JFrame {
 	    }
 	}
 	
-	public void toggleSelectionItems(boolean value) {
+	public void toggleSelectionOffers(boolean value) {
 		int nRow = modelItems.getRowCount();
 		
 		for (int i = 0 ; i < nRow ; i++) {
-	    	modelItems.setValueAt(value, i, 2);
+	    	modelItems.setValueAt(value, i, 4);
 	    }
 	}
 	
