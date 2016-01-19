@@ -98,7 +98,7 @@ public class Controller {
 								Resources.categories);
 
 						// Store them in the database 
-						dtb.insetCategories(filtered);
+						dtb.insertCategories(filtered);
 						
 						// Update the GUI list
 						window.populateCategoryList(filtered);
@@ -158,94 +158,26 @@ public class Controller {
 		
 		window.buttonCrawlItems.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Crawl for each category's items on a separate thread
-				window.clearLoadingBar();
-				Thread[] threads = new Thread[Resources.categories.size()];
-				final int progressInc = 30/threads.length;
-				int size = 0;
-				for (final Category category : Resources.categories.values()) {
-					threads[size] = new Thread() {
-						public void run() {
-							category.processItems();
-							window.progressCategories.setValue(
-									window.progressCategories.getValue()
-									+progressInc
-									);
-						}
-					};
-					threads[size].start();
-					size++;
-				}
-				
-				// Join the threads
-				for(int i = 0; i < size; i++) {
-					try {
-						threads[i].join();
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
-				}
+				// Check if we have anything to crawl
+				if (Resources.categories.size() > 0) {
+					// Crawl for each category's items on a separate thread
+					window.clearLoadingBar();
 					
-				System.out.println("Finished grabbing all subcategories");
-				final Map<Integer,List<Item>> items = new HashMap<Integer,List<Item>>();
-				
-				// Crawl for each category's items on a separate thread
-				System.out.println("Starting to crawl items");
-				threads = new Thread[Resources.categories.size()];
-				size = 0;
-				for (final Category category : Resources.categories.values()) {
-					threads[size] = new Thread() {
+					Thread thread = new Thread() {
 						public void run() {
-							try {
-								items.put(category.getId(), crawler.crawlItems(category));
-							} catch (IOException e) {
-								websiteFailure(window);
-							}
+							// Get all items from the categories / subcategories
+							Map<Integer, List<Item>> crawledItems = crawler.crawlAllItems(window);
+							
+							// Insert them into the database
+							dtb.insertItems(crawledItems);
+							
+							System.out.println("Done inserting into database");
 						}
 					};
-					threads[size].start();
-					size++;
-				}
-				
-				// Join the threads
-				for(int i = 0; i < size; i++) {
-					try {
-						threads[i].join();
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
-				}
-				
-				System.out.println("Waiting for all " + size + " threads to finish..");
-				
-				// Save all the items crawled in the back-end
-				System.out.println("Finished crawling " + items.size() + " categories.");
-				
-				System.out.println("Starting to crawl each item individually");
-				CrawlPool pool = new CrawlPool();
-				pool.populateItemPrices(crawler, items);
-				
-				System.out.println("Finished crawling idividual items.");
-				System.out.println("Test item :");
-				for(Entry<Integer, List<Item>> entry : items.entrySet()) {
-		        	List<Item> currentList = entry.getValue();
-		        	
-		        	System.out.println(currentList.get(0).getTitle() + " " + currentList.get(0).getPrice());
-		        	System.out.println(currentList.get(1).getTitle() + " " + currentList.get(1).getPrice());
-		        	System.out.println(currentList.get(2).getTitle() + " " + currentList.get(2).getPrice());
+					thread.start();
 				}
 			}
 		});
-	}
-	
-	private void websiteFailure(final MainWindow window) {
-		Thread thread = new Thread() {
-			public void run() {
-				window.progressCategories.setForeground(Color.red);
-				window.settingsLabel.setText(Resources.label_text_crawl_error);
-			}
-		};
-		thread.start();
 	}
 	
 	private void setUpDatabaseItems() {

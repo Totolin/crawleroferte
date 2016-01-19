@@ -1,5 +1,6 @@
 package com.aceucv.vpe.crawler.engine;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Map.Entry;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -64,7 +66,7 @@ public class Crawler {
 				categories.put(id, newCategory);
 
 				// Increment the progress bar
-				window.progressCategories.setValue(window.progressCategories.getValue() + progressTick);
+				window.incrementProgress(progressTick);
 				
 				// Add the new category to our view
 				window.addCategoryToList(newCategory);
@@ -119,6 +121,76 @@ public class Crawler {
 
 		return allItems;
 	}
+	
+	public Map<Integer, List<Item>> crawlAllItems (final MainWindow window) {
+		
+		Thread[] threads = new Thread[Resources.categories.size()];
+		final int progressInc = 30/threads.length;
+		int size = 0;
+		for (final Category category : Resources.categories.values()) {
+			threads[size] = new Thread() {
+				public void run() {
+					category.processItems();
+					window.incrementProgress(progressInc);
+				}
+			};
+			threads[size].start();
+			size++;
+		}
+		
+		// Join the threads
+		for(int i = 0; i < size; i++) {
+			try {
+				threads[i].join();
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+		}
+			
+		System.out.println("Finished grabbing all subcategories");
+		final Map<Integer,List<Item>> items = new HashMap<Integer,List<Item>>();
+		
+		// Crawl for each category's items on a separate thread
+		System.out.println("Starting to crawl items");
+		threads = new Thread[Resources.categories.size()];
+		
+		size = 0;
+		for (final Category category : Resources.categories.values()) {
+			threads[size] = new Thread() {
+				public void run() {
+					try {
+						items.put(category.getId(), crawlItems(category));
+					} catch (IOException e) {
+						websiteFailure(window);
+					}
+				}
+			};
+			threads[size].start();
+			size++;
+		}
+		
+		// Join the threads
+		for(int i = 0; i < size; i++) {
+			try {
+				threads[i].join();
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+		System.out.println("Waiting for all " + size + " threads to finish..");
+		
+		// Save all the items crawled in the back-end
+		System.out.println("Finished crawling " + items.size() + " categories.");
+		
+		System.out.println("Starting to crawl each item individually");
+		CrawlPool pool = new CrawlPool();
+		pool.populateItemPrices(this, items, window);
+		
+		System.out.println("Finished crawling idividual items.");
+		
+		return items;
+	}
 
 	private static List<Item> getItems(Document doc, int id) {
 		List<Item> items = new ArrayList<Item>();
@@ -148,14 +220,26 @@ public class Crawler {
 						if (subElem.className().compareTo("money-int") == 0) {
 							System.out.println(subElem.ownText());
 							item.setPrice(Float.parseFloat(subElem.ownText()));
+							item.obfuscateId();
 						}
 					}
 				}
 			}
+			
 		} catch (UnknownHostException e) {
 			// Not printing errors
 		} catch (IOException e) {
 			// Not printing errors
 		}
+	}
+	
+	private void websiteFailure(final MainWindow window) {
+		Thread thread = new Thread() {
+			public void run() {
+				window.progressCategories.setForeground(Color.red);
+				window.settingsLabel.setText(Resources.label_text_crawl_error);
+			}
+		};
+		thread.start();
 	}
 }

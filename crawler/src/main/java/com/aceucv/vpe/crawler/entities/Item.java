@@ -44,6 +44,22 @@ public class Item {
 	}
 
 	public void setTitle(String title) {
+		// Remove junk after title
+		title = title.replaceAll(" - eMAG.ro","");
+		title = title.replaceAll("'", "");
+		
 		this.title = title;
+	}
+	
+	public void obfuscateId() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(price);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((this.title == null) ? 0 : this.title.hashCode());
+		result = prime * result + ((this.URL == null) ? 0 : this.URL.hashCode());
+		
+		this.id = result;
 	}
 }

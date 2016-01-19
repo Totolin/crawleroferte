@@ -153,6 +153,13 @@ public class MainWindow extends JFrame {
 	    }
 	}
 	
+	public void incrementProgress(int value) {
+		this.progressCategories.setValue(
+				this.progressCategories.getValue()
+				+value
+				);
+	}
+	
 	public List<Integer> getSelectedCategories() {
 	    int nRow = modelSettings.getRowCount();
 		List<Integer> indexSelected = new ArrayList<Integer>();
