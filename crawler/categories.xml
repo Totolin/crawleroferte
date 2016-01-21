@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<categories>
+  <category>
+    <id>24</id>
+    <name>Desktop PC &amp; Monitoare</name>
+    <privurl>/desktop-pc-monitoare/l</privurl>
+    <url>http://emag.ro</url>
+    <subcategories/>
+  </category>
+  <category>
+    <id>65</id>
+    <name>Imprimante, Scanere &amp; Consumabile</name>
+    <privurl>/imprimante-scanere-consumabile/l</privurl>
+    <url>http://emag.ro</url>
+    <subcategories/>
+  </category>
+</categories>

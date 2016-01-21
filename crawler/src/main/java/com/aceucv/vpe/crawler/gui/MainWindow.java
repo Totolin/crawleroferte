@@ -26,6 +26,14 @@ import com.aceucv.vpe.crawler.entities.Category;
 import com.aceucv.vpe.crawler.entities.Offer;
 import com.aceucv.vpe.crawler.model.Resources;
 
+/**
+ * Main GUI Frame which holds all data to be crawled
+ * Also has a separate tab for setting preferences
+ * Must be set visible. Is self-
+ *
+ * @author cristiantotolin
+ *
+ */
 public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -63,31 +71,14 @@ public class MainWindow extends JFrame {
 	public  JProgressBar progressCategories;
 	private JFrame frame = new JFrame();
 
-	private String[] columnNamesItems = { "Name", "Category", "Price (RON)", "Discount (%)", "Link" };
+	private String[] columnNamesItems = { "Name", "ID", "Price (RON)", "Discount (RON)"};
 	private String[] columnNamesCategories = {"ID", "Name", "Select" };
 
-	private Object[][] dataOffers = { { "igor", "B01_125-358", "1.124.01.125", "true", true },
-			{ "lenka", "B21_002-242", "21.124.01.002", "true", false },
-			{ "peter", "B99_001-358", "99.124.01.001", "false", true },
-			{ "zuza", "B12_100-242", "12.124.01.100", "true", false },
-			{ "jozo", "BUS_011-358", "99.124.01.011", "false", false },
-			{ "nora", "B09_154-358", "9.124.01.154", "false", true },
-			{ "xantipa", "B01_001-358", "1.124.01.001", "false", false }, };
-
+	private Object[][] dataOffers = {};
 	private Object[][] dataCategories = {};
 
 	private DefaultTableModel modelItems = new DefaultTableModel(dataOffers, columnNamesItems) {
 		private static final long serialVersionUID = 1L;
-
-		@Override
-		public Class<?> getColumnClass(int column) {
-			switch (column) {
-			case 4:
-				return Boolean.class;
-			default:
-				return String.class;
-			}
-		}
 	};
 
 	private DefaultTableModel modelSettings = new DefaultTableModel(dataCategories, columnNamesCategories) {
@@ -105,7 +96,7 @@ public class MainWindow extends JFrame {
 	};
 
 	public void addItemToList(Offer newOffer) {
-		Object[] data = { newOffer.getName(), newOffer.getCategory(), newOffer.getPrice(), newOffer.getDiscount(),
+		Object[] data = { newOffer.getName(), newOffer.getCategory(), newOffer.getPriceString(), newOffer.getDiscountString(),
 				false };
 
 		modelItems.addRow(data);
@@ -119,10 +110,64 @@ public class MainWindow extends JFrame {
 	
 	public void populateCategoryList(List<Category> categories) {
 		clearCategoryList();
+		if (categories == null) {
+			// TODO DISPLAY AN EROR
+			return;
+		}
+		
 		for (Category category : categories) {
 			Object[] data = { category.getId(), category.getDescription(), true };
 			modelSettings.addRow(data);
 		}
+	}
+	
+	public void populateOfferList(List<Offer> offers) {
+		clearItemsList();
+		
+		for (Offer offer : offers) {
+			Object[] data = { offer.getName(), 
+					offer.getIdString(),
+					offer.getPriceString(), 
+					offer.getDiscountString() };
+			modelItems.addRow(data);
+		}
+	}
+	
+	public Offer getSelectedItem() {
+		int selected[] = itemsTable.getSelectedRows();
+		if (selected.length > 0) {
+			int currently_selected = selected[0];
+			
+			int id = Integer.parseInt((String) 
+					modelItems.getValueAt(currently_selected, 1));
+
+			if (Resources.offers.containsKey(id)){
+				return Resources.offers.get(id);
+			}
+		}
+		
+		return null;
+	}
+	
+	public List<Integer> getSelectedItemsIndex() {
+		int selected[] = itemsTable.getSelectedRows();
+		List<Integer> offers = new ArrayList<Integer>();
+		if (selected.length > 0) {
+			for (int i=0; i<selected.length; i++) {
+				int currently_selected = selected[i];
+				
+				int id = Integer.parseInt((String) 
+						modelItems.getValueAt(currently_selected, 1));
+
+				if (Resources.offers.containsKey(id)){
+					offers.add(id);
+				}
+				
+				modelItems.removeRow(i);
+			}
+		}
+		
+		return offers;
 	}
 	
 	public void clearCategoryList() {
@@ -146,11 +191,11 @@ public class MainWindow extends JFrame {
 	}
 	
 	public void toggleSelectionOffers(boolean value) {
-		int nRow = modelItems.getRowCount();
-		
-		for (int i = 0 ; i < nRow ; i++) {
-	    	modelItems.setValueAt(value, i, 4);
-	    }
+		if (!value) {
+			itemsTable.clearSelection();
+		} else {
+			itemsTable.setRowSelectionInterval(0, itemsTable.getRowCount()-1);
+		}
 	}
 	
 	public void incrementProgress(int value) {
@@ -304,7 +349,9 @@ public class MainWindow extends JFrame {
 		// Create all the tabs
 		tabs.addTab("Items", getItemsTab());
 		tabs.addTab("Settings", getSettingsTab());
-
+	}
+	
+	public void showWindow() {
 		// Set window configurations and visibility
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().add(tabs);

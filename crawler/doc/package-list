@@ -1,0 +1,7 @@
+com.aceucv.vpe.crawler
+com.aceucv.vpe.crawler.database
+com.aceucv.vpe.crawler.engine
+com.aceucv.vpe.crawler.entities
+com.aceucv.vpe.crawler.gui
+com.aceucv.vpe.crawler.model
+com.aceucv.vpe.crawler.source

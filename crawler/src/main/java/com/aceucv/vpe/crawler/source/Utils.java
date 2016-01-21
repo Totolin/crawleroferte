@@ -6,6 +6,11 @@ import java.util.Map;
 
 import com.aceucv.vpe.crawler.entities.Category;
 
+/**
+ * Class which stores utility functions
+ * @author cristiantotolin
+ *
+ */
 public class Utils {
 
 	public static List<Category> getCategoriesFromIndex(List<Integer> indexes, Map<Integer,Category> categories) {

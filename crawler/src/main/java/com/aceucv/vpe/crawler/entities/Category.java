@@ -11,6 +11,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 /**
+ * Class which holds details about a Category
+ * 
  * Created by ctotolin on 22-Nov-15.
  */
 public class Category {
@@ -21,6 +23,13 @@ public class Category {
 	private String rootURL;
 	private List<String> subcategories;
 
+	/**
+	 * Constructor for a Category, where no subcategories are provided
+	 * @param id
+	 * @param description
+	 * @param URL
+	 * @param rootURL
+	 */
 	public Category(int id, String description, String URL, String rootURL) {
 		this.id = id;
 		this.description = description;
@@ -29,6 +38,14 @@ public class Category {
 		this.subcategories = new ArrayList<String>();
 	}
 	
+	/**
+	 * Constructor for Category, where subcategories are provided
+	 * @param id
+	 * @param description
+	 * @param URL
+	 * @param rootURL
+	 * @param subcats
+	 */
 	public Category(int id, String description, String URL, String rootURL, String subcats) {
 		this.id = id;
 		this.description = description;
@@ -47,6 +64,10 @@ public class Category {
 
 	public int getId() {
 		return id;
+	}
+	
+	public String getIdString() {
+		return Integer.toString(id);
 	}
 
 	public void setId(int id) {
@@ -91,6 +112,9 @@ public class Category {
 		return elem.getElementsByAttribute("href").attr("href");
 	}
 
+	/**
+	 * Processes each of it's found subcategories
+	 */
 	public void processItems() {
 		try {
 			Document doc = Jsoup.connect(rootURL + privURL).get();

@@ -8,9 +8,20 @@ import java.util.concurrent.Executors;
 
 import com.aceucv.vpe.crawler.entities.Item;
 import com.aceucv.vpe.crawler.gui.MainWindow;
-
+import com.aceucv.vpe.crawler.model.Resources;
+/**
+ * Class used to manage threads for a multithreaded approach to crawling a website
+ * @author cristiantotolin
+ *
+ */
 public class CrawlPool {
 
+	/**
+	 * Starts sending out threads for each individual item to be crawled
+	 * @param crawler
+	 * @param categoryMap
+	 * @param window
+	 */
     public void populateItemPrices (final Crawler crawler, Map<Integer,List<Item>> categoryMap, final MainWindow window) {
     	
     	// Create an executor to pool all our threads
@@ -24,6 +35,12 @@ public class CrawlPool {
 		}
         
         // Assign progress bar tick
+        if (totalItems == 0) {
+        	// Website denied further access
+        	window.settingsLabel.setText(Resources.label_text_crawl_error);
+        	return;
+        }
+        
         float chunkSize  = (100 - window.progressCategories.getValue()) / totalItems ;
         final int progressTick = 2*(int) Math.ceil(chunkSize);
         System.out.println("Tick is : " + progressTick);
