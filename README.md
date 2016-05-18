@@ -1,4 +1,8 @@
-Crawler Oferte Magazine Online
+# Offers Crawler
 
-* Use hostname for demo, to change between local emag.ro and actual emag.ro
+A Java application used to crawl the popular Romanian web-store "emag.ro" for offers or fake prices hidden from the world.
 
+  - Finds all products listed (you can specify a certain category)
+  - Saves their prices in a MySQL Database
+  - Later does the search again, but this time comparing previous prices
+  - If there's any diffrence, inform the user about it
